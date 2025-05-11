@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>張子夫 - 程式開發者</title>
+    <title>張子夫的個人網站</title>
     <!-- 添加 Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 添加 AOS 動畫庫 -->
@@ -562,6 +562,7 @@
             position: relative;
             z-index: 1;
             margin-right: auto;
+            padding: 0 20px;
         }
         
         .hero h1 {
@@ -687,6 +688,7 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            gap: 30px;
         }
         
         .about-text {
@@ -1123,11 +1125,12 @@
         @media screen and (max-width: 768px) {
             .header-content {
                 position: relative;
-                justify-content: center;
+                justify-content: space-between;
+                padding: 0 20px;
             }
             
             .logo {
-                position: absolute;
+                position: relative;
                 left: 0;
                 z-index: 110;
             }
@@ -1135,32 +1138,36 @@
             .mobile-toggle {
                 display: block;
                 z-index: 110;
-                position: absolute;
+                position: relative;
                 right: 0;
             }
             
             .nav-wrapper {
-                position: absolute;
-                top: 100%;
+                position: fixed;
+                top: 0;
                 left: 0;
                 width: 100%;
+                height: 100vh;
                 background: rgba(13, 17, 23, 0.95);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-                transform: translateY(-150%);
+                transform: translateX(-100%);
                 transition: transform 0.3s ease;
                 z-index: 100;
-                padding: 20px 0;
+                padding: 80px 0 20px 0;
                 visibility: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
             
             .nav-wrapper.show {
-                transform: translateY(0);
+                transform: translateX(0);
                 visibility: visible;
             }
             
             #nav-menu {
                 flex-direction: column;
                 align-items: center;
+                gap: 20px;
             }
             
             #nav-menu li {
@@ -1173,6 +1180,7 @@
                 padding: 10px 0;
                 display: inline-block;
                 width: 100%;
+                font-size: 18px;
             }
             
             .hero-content {
@@ -1182,17 +1190,38 @@
                 padding: 0 20px;
             }
             
+            .container {
+                padding: 0 20px;
+                margin-left: 0 !important;
+            }
+            
             .hero-image {
                 display: none;
             }
             
-            .about-content, .skill-boxes {
+            .about-content {
                 flex-direction: column;
+                gap: 30px;
             }
             
             .about-text {
                 padding-right: 0;
-                margin-bottom: 40px;
+                min-width: 100%;
+            }
+            
+            .about-stats {
+                min-width: 100%;
+                gap: 15px;
+            }
+            
+            .cert-item {
+                min-width: 100%;
+            }
+            
+            .cert-container {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
             }
             
             .timeline::after {
@@ -1231,23 +1260,26 @@
             
             /* 改善首页区域在移动设备上的显示 */
             .hero {
-                padding-top: 70px;
                 height: auto;
                 min-height: 100vh;
+                padding: 100px 0 50px 0;
             }
             
             .hero h1 {
                 font-size: 2.5rem;
+                margin-bottom: 15px;
             }
             
             .hero p {
                 font-size: 1rem;
+                margin-bottom: 20px;
             }
             
             /* 改善按钮在移动设备上的显示 */
             .hero-buttons {
                 flex-direction: column;
                 gap: 10px;
+                width: 100%;
             }
             
             .btn {
@@ -1260,7 +1292,7 @@
             }
             
             .section-title h2 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             /* 改善状态框在移动设备上的显示 */
@@ -1274,9 +1306,59 @@
             }
             
             /* 改善技能框在移动设备上的显示 */
+            .skill-boxes {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
             .skill-box {
                 min-width: 100%;
-                padding: 20px;
+                max-width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            /* 改善各區域在手機上的排版 */
+            .hero h1 {
+                font-size: 2.5rem;
+                margin-bottom: 15px;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+                margin-bottom: 20px;
+            }
+            
+            .section-title {
+                margin-bottom: 40px;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .about-stats {
+                gap: 10px;
+            }
+            
+            .cert-item, .experience-section {
+                padding: 15px;
+            }
+            
+            .experience-list li {
+                padding: 8px 0;
+            }
+            
+            .experience-subtitle {
+                font-size: 1.3rem;
+            }
+            
+            /* 調整底部間距和排版 */
+            #footer {
+                padding: 30px 0;
+            }
+            
+            .social-links {
+                gap: 15px;
             }
         }
         
@@ -1286,8 +1368,12 @@
                 font-size: 2rem;
             }
             
+            .hero p {
+                font-size: 0.9rem;
+            }
+            
             .section-title h2 {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
             }
             
             .about-stats {
@@ -1296,6 +1382,15 @@
             
             .stat-box {
                 margin-bottom: 10px;
+                width: 100%;
+            }
+            
+            .skill-box {
+                min-width: 100%;
+            }
+            
+            .about, .skills, .experience, .certifications {
+                padding: 50px 0;
             }
         }
         
@@ -1460,8 +1555,8 @@
     
     <!-- 英雄區域 -->
     <section class="hero" id="hero">
-        <div class="container" style="margin-left: 120px;">
-            <div class="hero-content" data-aos="fade-right" style="text-align: left; max-width: 50%; padding-left: 0;">
+        <div class="container" style="margin-left: 80px;">
+            <div class="hero-content" data-aos="fade-right" style="text-align: left; max-width: 50%;">
                 <h1>嗨，我是張子夫</h1>
                 <p>我是一位學生，就讀於臺北市立士林高級商業職業學校。我熱愛程式設計，喜歡鑽研於各種演算法與AI應用。</p>
                 <div class="hero-buttons">
@@ -1905,19 +2000,23 @@
             
             // 響應式導航
             const mobileToggle = document.getElementById('mobile-toggle');
-            const navMenu = document.getElementById('nav-menu');
+            const navWrapper = document.querySelector('.nav-wrapper');
             
             mobileToggle.addEventListener('click', () => {
-                document.querySelector('.nav-wrapper').classList.toggle('show');
+                navWrapper.classList.toggle('show');
                 
                 // 切換圖標
                 const icon = mobileToggle.querySelector('i');
-                if (document.querySelector('.nav-wrapper').classList.contains('show')) {
+                if (navWrapper.classList.contains('show')) {
                     icon.classList.remove('fa-bars');
                     icon.classList.add('fa-times');
+                    // 防止背景滾動
+                    document.body.style.overflow = 'hidden';
                 } else {
                     icon.classList.remove('fa-times');
                     icon.classList.add('fa-bars');
+                    // 恢復背景滾動
+                    document.body.style.overflow = '';
                 }
             });
             
@@ -1925,9 +2024,11 @@
             const navItems = document.querySelectorAll('#nav-menu li a');
             navItems.forEach(item => {
                 item.addEventListener('click', () => {
-                    document.querySelector('.nav-wrapper').classList.remove('show');
+                    navWrapper.classList.remove('show');
                     mobileToggle.querySelector('i').classList.remove('fa-times');
                     mobileToggle.querySelector('i').classList.add('fa-bars');
+                    // 恢復背景滾動
+                    document.body.style.overflow = '';
                 });
             });
             
