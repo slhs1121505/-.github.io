@@ -24,6 +24,16 @@
             --transition-speed: 0.5s;
         }
         
+        /* 添加移动设备下的hero容器样式 */
+        @media screen and (max-width: 768px) {
+            .hero .container {
+                margin-left: 0 !important;
+                padding: 0 20px !important;
+                box-sizing: border-box;
+                width: 100%;
+            }
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -563,6 +573,17 @@
             z-index: 1;
             margin-right: auto;
             padding: 0 20px;
+        }
+        
+        /* 添加英雄区域容器样式 */
+        .hero-container {
+            margin-left: 80px;
+        }
+        
+        /* 桌面版英雄区域内容样式 */
+        .desktop-hero-content {
+            text-align: left;
+            max-width: 50%;
         }
         
         .hero h1 {
@@ -1123,10 +1144,32 @@
         
         /* 媒体查询 - 响应式布局 */
         @media screen and (max-width: 768px) {
+            /* 修复手机版header和hero布局 */
+            header {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 15px 0;
+            }
+            
             .header-content {
                 position: relative;
                 justify-content: space-between;
                 padding: 0 20px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            
+            /* 手机版英雄区域容器样式 */
+            .hero-container {
+                margin-left: 0 !important;
+                padding: 0 20px;
+                width: 100%;
+            }
+            
+            /* 手机版英雄区域内容样式 */
+            .desktop-hero-content {
+                text-align: center;
+                max-width: 100% !important;
             }
             
             .logo {
@@ -1184,15 +1227,12 @@
             }
             
             .hero-content {
-                text-align: center;
-                margin: 0 auto;
-                max-width: 100% !important;
+                margin: 0 auto !important;
                 padding: 0 20px;
             }
             
             .container {
                 padding: 0 20px;
-                margin-left: 0 !important;
             }
             
             .hero-image {
@@ -1318,22 +1358,8 @@
             }
             
             /* 改善各區域在手機上的排版 */
-            .hero h1 {
-                font-size: 2.5rem;
-                margin-bottom: 15px;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-                margin-bottom: 20px;
-            }
-            
             .section-title {
                 margin-bottom: 40px;
-            }
-            
-            .section-title h2 {
-                font-size: 1.8rem;
             }
             
             .about-stats {
@@ -1555,8 +1581,8 @@
     
     <!-- 英雄區域 -->
     <section class="hero" id="hero">
-        <div class="container" style="margin-left: 80px;">
-            <div class="hero-content" data-aos="fade-right" style="text-align: left; max-width: 50%;">
+        <div class="container hero-container">
+            <div class="hero-content desktop-hero-content" data-aos="fade-right">
                 <h1>嗨，我是張子夫</h1>
                 <p>我是一位學生，就讀於臺北市立士林高級商業職業學校。我熱愛程式設計，喜歡鑽研於各種演算法與AI應用。</p>
                 <div class="hero-buttons">
