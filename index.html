@@ -10,8 +10,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <!-- 添加 GSAP 動畫庫 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <!-- 添加 GSAP ScrollTrigger 插件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <!-- 添加 Typed.js 打字机效果库 -->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
     <style>
         :root {
+            /* 暗色主题变量 */
             --primary: #2A2A72;       /* 主色调：深蓝色 */
             --secondary: #009FFD;     /* 次要色调：亮蓝色 */
             --accent: #00FF9D;        /* 强调色：绿色 */
@@ -20,8 +25,265 @@
             --light: #F0F6FC;         /* 浅色文字 */
             --text: #F0F6FC;          /* 文字颜色改为浅色 */
             --code-bg: #1E2127;       /* 代码背景 */
+            --card-bg: #1E2127;       /* 卡片背景 */
             --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             --transition-speed: 0.5s;
+            
+            /* 明亮主题变量（初始禁用） */
+            --light-primary: #4361EE;
+            --light-secondary: #3A86FF;
+            --light-accent: #4CC9F0;
+            --light-dark: #F7F9FC;
+            --light-darker: #FFFFFF;
+            --light-text: #333333;
+            --light-code-bg: #F1F1F1;
+            --light-card-bg: #FFFFFF;
+            --light-gradient: linear-gradient(135deg, var(--light-primary) 0%, var(--light-secondary) 100%);
+        }
+        
+        /* 亮色主题样式 */
+        body.light-theme {
+            background-color: var(--light-dark);
+            color: var(--light-text);
+        }
+        
+        body.light-theme header {
+            background: rgba(247, 249, 252, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        body.light-theme header.scrolled {
+            background: rgba(247, 249, 252, 0.95);
+        }
+        
+        body.light-theme .logo {
+            color: var(--light-primary);
+        }
+        
+        body.light-theme .logo span {
+            color: var(--light-primary);
+        }
+        
+        body.light-theme .hero {
+            background: var(--light-gradient);
+        }
+        
+        body.light-theme .hero:after {
+            background: linear-gradient(to top, var(--light-dark), transparent);
+        }
+        
+        body.light-theme .skill-box,
+        body.light-theme .stat-box,
+        body.light-theme .cert-item,
+        body.light-theme .timeline-content,
+        body.light-theme .experience-section {
+            background: var(--light-card-bg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        body.light-theme .section-title h2 {
+            color: var(--light-primary);
+        }
+        
+        body.light-theme .experience-subtitle {
+            color: var(--light-primary);
+        }
+        
+        body.light-theme .cert-title {
+            color: var(--light-primary);
+        }
+        
+        body.light-theme .skill-title {
+            color: var(--light-primary);
+        }
+        
+        body.light-theme .about {
+            background: var(--light-dark);
+        }
+        
+        body.light-theme .skills {
+            background: linear-gradient(135deg, #F7F9FC 0%, #E9ECEF 100%);
+        }
+        
+        body.light-theme .certifications {
+            background: var(--light-dark);
+        }
+        
+        body.light-theme .experience {
+            background: linear-gradient(135deg, #F7F9FC 0%, #E9ECEF 100%);
+        }
+        
+        body.light-theme #footer {
+            background: var(--light-darker);
+            color: var(--light-text);
+        }
+        
+        /* 添加鼠标跟随效果的样式 */
+        .cursor-follower {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background: rgba(0, 255, 157, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.2s ease;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* 技能进度条样式 - 移除 */
+        .skill-progress-container {
+            display: none;
+        }
+        
+        .skill-progress-bar {
+            display: none;
+        }
+        
+        /* 打字机效果容器样式 */
+        .typing-container {
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .typed-text {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        /* 3D卡片效果增强 */
+        .card-3d-wrapper {
+            perspective: 1500px;
+            height: 100%;
+        }
+        
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            background: #1E2127;
+            padding: 30px;
+        }
+        
+        .skill-box:hover .card-3d {
+            transform: rotateY(15deg) rotateX(15deg);
+            box-shadow: 0 15px 35px rgba(0, 255, 157, 0.2);
+        }
+        
+        /* 让3D效果更明显的光照效果 */
+        .card-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);
+            border-radius: 10px;
+            transform: translateZ(1px);
+            pointer-events: none;
+        }
+        
+        /* 修改技能框样式以适应3D效果 */
+        .skill-box {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            height: 320px;
+        }
+        
+        body.light-theme .card-3d {
+            background: var(--light-card-bg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        body.light-theme .skill-box:hover .card-3d {
+            box-shadow: 0 15px 35px rgba(67, 97, 238, 0.2);
+        }
+        
+        /* 滚动视差效果基础样式 */
+        .parallax-bg {
+            position: absolute;
+            width: 100%;
+            height: 150%;
+            top: -25%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+            opacity: 0.2;
+            transform: translateZ(-1px) scale(1.5);
+        }
+        
+        /* 主题切换按钮样式 */
+        .theme-switch {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+            margin-left: 15px;
+            z-index: 10; /* 添加z-index确保按钮在最上层 */
+        }
+        
+        /* 在移动设备上调整主题切换按钮的位置 */
+        @media screen and (max-width: 768px) {
+            .theme-switch {
+                position: absolute;
+                right: 60px; /* 放在汉堡菜单左侧 */
+                top: 50%;
+                transform: translateY(-50%);
+                margin-left: 0;
+            }
+            
+            .theme-switch:hover {
+                transform: translateY(-50%) scale(1.1);
+            }
+        }
+        
+        .theme-switch:hover {
+            background: var(--accent);
+            transform: scale(1.1);
+        }
+        
+        /* 添加移动设备下的hero容器样式 */
+        @media screen and (max-width: 768px) {
+            .hero .container {
+                margin-left: 0 !important;
+                padding: 0 20px !important;
+                box-sizing: border-box;
+                width: 100%;
+            }
+            
+            /* 修复手机版hero布局 */
+            .hero-container {
+                margin-left: 0 !important;
+                padding: 0 20px !important;
+            }
+            
+            /* 修复手机版文字居中问题 */
+            .desktop-hero-content {
+                text-align: center;
+                max-width: 100% !important;
+            }
+            
+            /* 雨滴效果在移动设备上的调整 */
+            .rain-drop {
+                height: 10px; /* 更小的雨滴 */
+            }
         }
         
         * {
@@ -72,7 +334,13 @@
             border: 3px solid var(--accent);
             box-shadow: 0 0 30px rgba(0, 255, 157, 0.5);
             z-index: 2;
-            animation: float 3s ease-in-out infinite;
+            animation: pulse-avatar 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-avatar {
+            0% { transform: scale(1); box-shadow: 0 0 30px rgba(0, 255, 157, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(0, 255, 157, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 0 30px rgba(0, 255, 157, 0.5); }
         }
         
         .avatar {
@@ -176,7 +444,7 @@
         .code-line:nth-child(5) { animation-delay: 1.8s; }
         .code-line:nth-child(6) { animation-delay: 2.3s; }
         .code-line:nth-child(7) { animation-delay: 2.8s; }
-        .code-line:nth-child(8) { animation-delay: 3.0s; }
+        .code-line:nth-child(8) { animation-delay: 0s; }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -530,7 +798,7 @@
             display: none;
             font-size: 24px;
             cursor: pointer;
-            color: var(--light);
+            color: var(--light-primary);
             position: absolute;
             right: 0;
         }
@@ -560,9 +828,20 @@
         .hero-content {
             max-width: 600px;
             position: relative;
-            z-index: 1;
+            z-index: 2; /* 修改为更高的z-index */
             margin-right: auto;
             padding: 0 20px;
+        }
+        
+        /* 添加英雄区域容器样式 */
+        .hero-container {
+            margin-left: 150px;  /* 增加左边距，让文字往右移 */
+        }
+        
+        /* 桌面版英雄区域内容样式 */
+        .desktop-hero-content {
+            text-align: left;
+            max-width: 50%;
         }
         
         .hero h1 {
@@ -624,6 +903,114 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 2; /* 添加更高的z-index */
+        }
+        
+        /* 为头像添加白色脉冲特效 - 头像静止不动，只有外发光效果 */
+        @keyframes pulse-white {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+        
+        /* 添加头像光环效果 */
+        .hero-avatar-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            animation: float-avatar 6s ease-in-out infinite;
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.2);
+        }
+        
+        .hero-avatar-container::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: transparent;
+            border: 4px solid transparent;
+            border-top: 4px solid var(--accent);
+            border-right: 4px solid var(--primary);
+            border-bottom: 4px solid var(--accent);
+            border-left: 4px solid var(--primary);
+            animation: pulse-white 3s infinite, rotate-halo 15s linear infinite;
+            z-index: 1;
+            filter: drop-shadow(0 0 10px var(--accent));
+        }
+        
+        /* 添加第二個光暈層 */
+        .hero-avatar-container::after {
+            content: '';
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            animation: pulse-glow 4s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        /* 頭像粒子容器 */
+        .avatar-particles {
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            top: -10%;
+            left: -10%;
+            pointer-events: none;
+            z-index: 3;
+        }
+        
+        /* 頭像粒子樣式 */
+        .avatar-particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0;
+        }
+        
+        /* 頭像懸浮動畫 */
+        @keyframes float-avatar {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(1deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(10px) rotate(-1deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        /* 光暈旋轉動畫 */
+        @keyframes rotate-halo {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 光暈呼吸效果 */
+        @keyframes pulse-glow {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+        
+        /* 粒子動畫 */
+        @keyframes particle-animation {
+            0% { transform: translate(0, 0); opacity: 0; }
+            25% { opacity: 0.8; }
+            100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
         }
         
         .hero-avatar {
@@ -631,8 +1018,21 @@
             height: 400px;
             border-radius: 50%;
             object-fit: cover;
-            box-shadow: 0 0 50px rgba(0, 255, 157, 0.3);
-            animation: float 6s ease-in-out infinite;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 2;
+            transition: transform 0.5s ease-out;
+            border: 6px solid transparent;
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            background-image: linear-gradient(to right, transparent, transparent), 
+                              linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        
+        /* 鼠標懸停效果 */
+        .hero-avatar:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 70px rgba(255, 255, 255, 0.5);
         }
         
         .scroll-down {
@@ -856,6 +1256,29 @@
             padding: 100px 0;
             background: linear-gradient(135deg, #1E2127 0%, #0D1117 100%);
             transition: background 0.5s ease;
+        }
+        
+        .experience-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            max-width: 100%;
+        }
+        
+        @media screen and (min-width: 992px) {
+            .experience-content {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media screen and (min-width: 768px) and (max-width: 991px) {
+            .experience-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .experience-content > div:last-child {
+                grid-column: span 2;
+            }
         }
         
         .timeline {
@@ -1123,10 +1546,32 @@
         
         /* 媒体查询 - 响应式布局 */
         @media screen and (max-width: 768px) {
+            /* 修复手机版header和hero布局 */
+            header {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 15px 0;
+            }
+            
             .header-content {
                 position: relative;
                 justify-content: space-between;
                 padding: 0 20px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            
+            /* 手机版英雄区域容器样式 */
+            .hero-container {
+                margin-left: 0 !important;
+                padding: 0 20px;
+                width: 100%;
+            }
+            
+            /* 手机版英雄区域内容样式 */
+            .desktop-hero-content {
+                text-align: center;
+                max-width: 100% !important;
             }
             
             .logo {
@@ -1184,15 +1629,12 @@
             }
             
             .hero-content {
-                text-align: center;
-                margin: 0 auto;
-                max-width: 100% !important;
+                margin: 0 auto !important;
                 padding: 0 20px;
             }
             
             .container {
                 padding: 0 20px;
-                margin-left: 0 !important;
             }
             
             .hero-image {
@@ -1318,22 +1760,8 @@
             }
             
             /* 改善各區域在手機上的排版 */
-            .hero h1 {
-                font-size: 2.5rem;
-                margin-bottom: 15px;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-                margin-bottom: 20px;
-            }
-            
             .section-title {
                 margin-bottom: 40px;
-            }
-            
-            .section-title h2 {
-                font-size: 1.8rem;
             }
             
             .about-stats {
@@ -1359,6 +1787,31 @@
             
             .social-links {
                 gap: 15px;
+            }
+            
+            /* 改善經歷區域在移動設備上的顯示 */
+            .experience-section {
+                padding: 15px 12px;
+            }
+            
+            .experience-subtitle {
+                font-size: 1.3rem;
+                padding-bottom: 8px;
+                margin-bottom: 10px;
+            }
+            
+            .experience-list li {
+                padding: 8px 0;
+            }
+            
+            .experience-list i {
+                margin-right: 10px;
+                font-size: 16px;
+            }
+            
+            .experience-list li span {
+                font-size: 14px;
+                line-height: 1.4;
             }
         }
         
@@ -1392,6 +1845,24 @@
             .about, .skills, .experience, .certifications {
                 padding: 50px 0;
             }
+            
+            /* 進一步優化極小屏幕上的經歷區域 */
+            .experience-section {
+                padding: 12px 10px;
+            }
+            
+            .experience-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .experience-list i {
+                font-size: 14px;
+                margin-top: 2px; /* 稍微調整圖標與文字的對齊 */
+            }
+            
+            .experience-list li span {
+                font-size: 13px;
+            }
         }
         
         /* 添加黑暗模式特有样式 */
@@ -1401,6 +1872,9 @@
             margin-bottom: 30px;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
         }
         
         .experience-subtitle {
@@ -1409,18 +1883,30 @@
             margin-bottom: 15px;
             border-bottom: 2px solid var(--secondary);
             padding-bottom: 10px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
         
         .experience-list {
             list-style: none;
             padding: 0;
+            width: 100%;
         }
         
         .experience-list li {
             padding: 10px 0;
             display: flex;
-            align-items: center;
+            align-items: flex-start;  /* 改為頂部對齊，處理多行文本 */
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .experience-list li span {
+            flex: 1;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         .experience-list li:last-child {
@@ -1431,6 +1917,7 @@
             color: var(--accent);
             margin-right: 15px;
             font-size: 18px;
+            flex-shrink: 0;  /* 防止圖標縮小 */
         }
         
         /* 導航樣式 */
@@ -1484,6 +1971,76 @@
         header.scrolled #nav-menu li a {
             color: var(--light);
         }
+        
+        /* 添加雨滴粒子特效样式 */
+        .rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* 改回0 */
+            pointer-events: none;
+        }
+        
+        .rain-drop {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            width: 1px;
+            height: 15px;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            transform: rotate(20deg);
+            animation: rain-fall linear infinite;
+        }
+        
+        @keyframes rain-fall {
+            0% {
+                transform: translateY(-100px) rotate(20deg);
+                opacity: 0;
+            }
+            25% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 0.7;
+            }
+            75% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(100vh) rotate(20deg);
+                opacity: 0;
+            }
+        }
+        
+        /* 禁止页面加载时滚动 */
+        body.loading {
+            overflow: hidden;
+        }
+        
+        /* 社交媒体按钮主题切换样式 */
+        body.light-theme .social-link {
+            background: var(--light-dark);
+            color: var(--light-primary);
+        }
+        
+        body.light-theme .social-link:hover {
+            background: var(--light-primary);
+            color: var(--light-dark);
+        }
+        
+        /* 修复导航菜单在亮色主题下的文字可见性 */
+        body.light-theme #nav-menu li a {
+            color: var(--light-primary);
+        }
+        
+        body.light-theme #nav-menu li a:hover {
+            color: var(--light-accent);
+        }
+        
+        body.light-theme #nav-menu li a::after {
+            background-color: var(--light-accent);
+        }
     </style>
 </head>
 <body>
@@ -1491,7 +2048,7 @@
     <div class="preloader">
         <div class="preloader-content">
             <div class="avatar-container">
-                <img src="fu.png" alt="張子夫 Avatar" class="avatar">
+                <img src="454854.png" alt="張子夫 Avatar" class="avatar">
                 <div class="avatar-glow"></div>
             </div>
             <div class="terminal">
@@ -1504,13 +2061,16 @@
                     <div class="terminal-title">張子夫_terminal.exe</div>
                 </div>
                 <div class="terminal-body">
+                    <div class="loader-typing-container">
+                        <span class="loader-typed-text"></span>
+                    </div>
                     <div class="code-line"><span class="code-prompt">$</span> <span class="code-command">initializing_profile</span></div>
                     <div class="code-line"><span class="code-prompt">$</span> <span class="code-command">sudo apt-get install skills</span></div>
                     <div class="code-line"><span class="code-response">[✓] Python</span></div>
                     <div class="code-line"><span class="code-response">[✓] HTML</span></div>
                     <div class="code-line"><span class="code-response">[✓] CSS</span></div>
                     <div class="code-line"><span class="code-prompt">$</span> <span class="code-command">loading personal_website.html</span></div>
-                    <div class="code-line"><span class="code-response">Progress: <span class="counter">0%</span></span></div>
+                    <div class="code-line"><span class="code-response">Progress: </span></div>
                     <div class="code-line loading-bar-container">
                         <div class="loading-bar"></div>
                     </div>
@@ -1532,7 +2092,7 @@
         <div class="container">
             <div class="header-content">
                 <a href="#" class="logo">
-                    <img src="fu.png" alt="張子夫 Logo">
+                    <img src="454854.png" alt="張子夫 Logo">
                     <span>張子夫</span>
                 </a>
                 
@@ -1549,15 +2109,24 @@
                         <li><a href="#footer">聯絡我</a></li>
                     </ul>
                 </div>
+                
+                <!-- 添加主题切换按钮到导航栏 -->
+                <div class="theme-switch" id="themeSwitch">
+                    <i class="fas fa-moon"></i>
+                </div>
             </div>
         </div>
     </header>
     
     <!-- 英雄區域 -->
     <section class="hero" id="hero">
-        <div class="container" style="margin-left: 80px;">
-            <div class="hero-content" data-aos="fade-right" style="text-align: left; max-width: 50%;">
+        <!-- 雨滴粒子效果将由JavaScript动态添加到这里 -->
+        <div class="container hero-container">
+            <div class="hero-content desktop-hero-content" data-aos="fade-right">
                 <h1>嗨，我是張子夫</h1>
+                <div class="typing-container">
+                    <span class="typed-text"></span>
+                </div>
                 <p>我是一位學生，就讀於臺北市立士林高級商業職業學校。我熱愛程式設計，喜歡鑽研於各種演算法與AI應用。</p>
                 <div class="hero-buttons">
                     <a href="#experience" class="btn btn-primary"><i class="fas fa-code"></i> 個人經歷</a>
@@ -1566,9 +2135,14 @@
             </div>
             
             <div class="hero-image" data-aos="fade-left">
-                <img src="fu.png" alt="張子夫 Avatar" class="hero-avatar">
+                <div class="hero-avatar-container">
+                    <img src="454854.png" alt="張子夫 Avatar" class="hero-avatar">
+                </div>
             </div>
         </div>
+        
+        <!-- 添加视差背景 -->
+        <div class="parallax-bg"></div>
         
         <a href="#about" class="scroll-down">
             <i class="fas fa-chevron-down"></i>
@@ -1595,7 +2169,7 @@
                         <div class="stat-title">年程式經驗</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-number" id="counter2">1</div>
+                        <div class="stat-number" id="counter2">2</div>
                         <div class="stat-title">完成專案</div>
                     </div>
                     <div class="stat-box">
@@ -1619,28 +2193,34 @@
             </div>
             
             <div class="skill-boxes">
-                <div class="skill-box" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="skill-icon">
-                        <i class="fab fa-python"></i>
+                <div class="skill-box card-3d-wrapper" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="card-3d">
+                        <div class="skill-icon">
+                            <i class="fab fa-python"></i>
+                        </div>
+                        <h3 class="skill-title">Python</h3>
+                        <p class="skill-info">熟悉Python程式設計，目前主要專注於演算法。</p>
                     </div>
-                    <h3 class="skill-title">Python</h3>
-                    <p class="skill-info">熟悉Python程式設計，目前主要專注於演算法。</p>
                 </div>
                 
-                <div class="skill-box" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="skill-icon">
-                        <i class="fab fa-html5"></i>
+                <div class="skill-box card-3d-wrapper" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="card-3d">
+                        <div class="skill-icon">
+                            <i class="fab fa-html5"></i>
+                        </div>
+                        <h3 class="skill-title">HTML</h3>
+                        <p class="skill-info">掌握HTML網頁開發基礎，能夠構建結構良好的網頁內容。</p>
                     </div>
-                    <h3 class="skill-title">HTML</h3>
-                    <p class="skill-info">掌握HTML網頁開發基礎，能夠構建結構良好的網頁內容。</p>
                 </div>
                 
-                <div class="skill-box" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="skill-icon">
-                        <i class="fab fa-css3-alt"></i>
+                <div class="skill-box card-3d-wrapper" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="card-3d">
+                        <div class="skill-icon">
+                            <i class="fab fa-css3-alt"></i>
+                        </div>
+                        <h3 class="skill-title">CSS</h3>
+                        <p class="skill-info">熟悉CSS樣式設計，能夠為網頁添加美觀的視覺效果和響應式設計。</p>
                     </div>
-                    <h3 class="skill-title">CSS</h3>
-                    <p class="skill-info">熟悉CSS樣式設計，能夠為網頁添加美觀的視覺效果和響應式設計。</p>
                 </div>
             </div>
         </div>
@@ -1721,7 +2301,7 @@
                         </li>
                         <li>
                             <i class="fas fa-trophy"></i>
-                            <span>2025 CSF 程速勁賽 參賽</span>
+                            <span>2025 CSF 程速勁賽 參與</span>
                         </li>
                         <li>
                             <i class="fas fa-trophy"></i>
@@ -1731,7 +2311,7 @@
                 </div>
                 
                 <div class="experience-section" data-aos="fade-up" data-aos-delay="400">
-                    <h3 class="experience-subtitle">校內幹部 & 成績</h3>
+                    <h3 class="experience-subtitle">校內幹部 & 表現</h3>
                     <ul class="experience-list">
                         <li>
                             <i class="fas fa-star"></i>
@@ -1775,12 +2355,44 @@
         <i class="fas fa-arrow-up"></i>
     </div>
     
+    <!-- 鼠标跟随效果 -->
+    <div class="cursor-follower"></div>
+    
     <!-- AOS 動畫庫 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     
     <script>
         // 等待頁面載入
         document.addEventListener('DOMContentLoaded', function() {
+            // 禁止初始滚动
+            document.body.classList.add('loading');
+            
+            // 创建雨滴粒子特效
+            createRainEffect();
+            
+            // 初始化鼠标跟随效果
+            initCursorFollower();
+            
+            // 初始化主题切换
+            initThemeSwitch();
+            
+            // 初始化打字机效果
+            initTyped();
+            
+            // 添加3D卡片效果
+            init3DCards();
+            
+            // 添加视差滚动效果
+            initParallaxEffect();
+            
+            // 初始化頭像粒子效果
+            initAvatarParticles();
+            
+            // 载入GSAP库和初始化动画
+            if (typeof gsap !== 'undefined') {
+                initializeGSAPAnimations();
+            }
+            
             // 載入動畫
             const preloader = document.querySelector('.preloader');
             const counter = document.querySelector('.counter');
@@ -1799,9 +2411,8 @@
                 // 获取当前阶段
                 let currentStage = loadingStages.find(stage => count < stage.end) || loadingStages[loadingStages.length - 1];
                 
-                // 更新计数器（使用数字滚动动画）
+                // 更新计数器（不再显示数字）
                 count++;
-                updateCounterWithAnimation(count);
                 
                 // 更新进度条（使用平滑动画）
                 const loadingBar = document.querySelector('.loading-bar');
@@ -1836,6 +2447,9 @@
                         setTimeout(() => {
                             preloader.style.display = 'none';
                             
+                            // 移除loading类，允许滚动
+                            document.body.classList.remove('loading');
+                            
                             // 初始化AOS动画
                             AOS.init({
                                 duration: 1000,
@@ -1844,57 +2458,326 @@
                                 offset: 100,
                                 easing: 'ease-in-out'
                             });
+                            
+                            // 初始化技能进度条
+                            initSkillProgressBars();
                         }, 300);
                     }, 500); // 大大缩短最终完成时间
                 }
             }
             
-            // 添加数字滚动动画函数
-            function updateCounterWithAnimation(value) {
-                const counter = document.querySelector('.counter');
-                if (!counter) return;
+            // 初始化鼠标跟随效果
+            function initCursorFollower() {
+                const cursor = document.querySelector('.cursor-follower');
                 
-                // 根据进度调整颜色渐变
-                const startColor = [42, 42, 114]; // 深紫色 #2A2A72
-                const endColor = [0, 159, 253];  // 蓝色 #009FFD
-                
-                // 计算当前颜色
-                const percent = value / 100;
-                const currentColor = startColor.map((start, i) => {
-                    return Math.round(start + (endColor[i] - start) * percent);
+                // 鼠標移動時更新位置
+                document.addEventListener('mousemove', (e) => {
+                    gsap.to(cursor, {
+                        x: e.clientX,
+                        y: e.clientY,
+                        duration: 0.3,
+                        ease: 'power3.out'
+                    });
                 });
                 
-                // 更新颜色渐变
-                const colorStart = `rgb(${startColor[0]}, ${startColor[1]}, ${startColor[2]})`;
-                const colorEnd = `rgb(${currentColor[0]}, ${currentColor[1]}, ${currentColor[2]})`;
-                counter.style.background = `linear-gradient(90deg, ${colorStart}, ${colorEnd})`;
-                counter.style.backgroundClip = 'text';
-                counter.style.webkitBackgroundClip = 'text';
+                // 鼠標懸停在鏈接和按鈕上時的效果
+                const links = document.querySelectorAll('a, button, .btn, .skill-box, .social-link');
+                links.forEach(link => {
+                    link.addEventListener('mouseenter', () => {
+                        cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+                        cursor.style.backgroundColor = 'rgba(0, 255, 157, 0.2)';
+                        cursor.style.mixBlendMode = 'normal';
+                    });
+                    
+                    link.addEventListener('mouseleave', () => {
+                        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                        cursor.style.backgroundColor = 'rgba(0, 255, 157, 0.5)';
+                        cursor.style.mixBlendMode = 'difference';
+                    });
+                });
                 
-                // 如果是首次更新，创建counter-inner和所有数字
-                if (!counter.querySelector('.counter-inner')) {
-                    const counterInner = document.createElement('div');
-                    counterInner.classList.add('counter-inner');
+                // 鼠標離開頁面時隱藏
+                document.addEventListener('mouseleave', () => {
+                    cursor.style.opacity = '0';
+                });
+                
+                // 鼠標進入頁面時顯示
+                document.addEventListener('mouseenter', () => {
+                    cursor.style.opacity = '1';
+                });
+                
+                // 為頭像添加3D傾斜效果
+                const heroAvatar = document.querySelector('.hero-avatar-container');
+                if (heroAvatar) {
+                    const avatarImage = heroAvatar.querySelector('.hero-avatar');
                     
-                    // 创建0-100的所有数字元素
-                    for (let i = 0; i <= 100; i++) {
-                        const numberElement = document.createElement('div');
-                        numberElement.classList.add('counter-number');
-                        numberElement.textContent = i + '%';
-                        // 设置渐变颜色
-                        numberElement.style.background = `linear-gradient(90deg, ${colorStart}, ${colorEnd})`;
-                        numberElement.style.backgroundClip = 'text';
-                        numberElement.style.webkitBackgroundClip = 'text';
-                        counterInner.appendChild(numberElement);
-                    }
+                    // 在整個hero區域監聽鼠標移動
+                    document.querySelector('.hero').addEventListener('mousemove', e => {
+                        // 獲取hero區域的位置和大小
+                        const heroRect = document.querySelector('.hero').getBoundingClientRect();
+                        
+                        // 計算鼠標在hero區域內的相對位置 (從-1到1)
+                        const xPos = ((e.clientX - heroRect.left) / heroRect.width - 0.5) * 2;
+                        const yPos = ((e.clientY - heroRect.top) / heroRect.height - 0.5) * 2;
+                        
+                        // 限制旋轉角度在±10度以內
+                        const maxRotation = 10;
+                        const xRotation = yPos * maxRotation; // 垂直移動控制水平旋轉
+                        const yRotation = -xPos * maxRotation; // 水平移動控制垂直旋轉
+                        
+                        // 應用旋轉效果到頭像容器
+                        gsap.to(heroAvatar, {
+                            rotationX: xRotation,
+                            rotationY: yRotation,
+                            duration: 1,
+                            ease: 'power2.out'
+                        });
+                        
+                        // 添加一點陰影偏移來增強3D效果
+                        const shadowX = -xPos * 20;
+                        const shadowY = -yPos * 20;
+                        gsap.to(avatarImage, {
+                            boxShadow: `${shadowX}px ${shadowY}px 50px rgba(255, 255, 255, 0.3)`,
+                            duration: 1,
+                            ease: 'power2.out'
+                        });
+                    });
                     
-                    counter.innerHTML = '';
-                    counter.appendChild(counterInner);
+                    // 鼠標離開hero區域時重置頭像旋轉和陰影
+                    document.querySelector('.hero').addEventListener('mouseleave', () => {
+                        gsap.to(heroAvatar, {
+                            rotationX: 0,
+                            rotationY: 0,
+                            duration: 1.5,
+                            ease: 'elastic.out(1, 0.5)'
+                        });
+                        
+                        gsap.to(avatarImage, {
+                            boxShadow: '0 0 50px rgba(255, 255, 255, 0.3)',
+                            duration: 1.5,
+                            ease: 'elastic.out(1, 0.5)'
+                        });
+                    });
+                }
+            }
+            
+            // 初始化主题切换
+            function initThemeSwitch() {
+                const themeSwitch = document.getElementById('themeSwitch');
+                const icon = themeSwitch.querySelector('i');
+                
+                // 检查本地存储的主题
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-theme');
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
                 }
                 
-                // 更新counter-inner位置以显示正确的数字
-                const counterInner = counter.querySelector('.counter-inner');
-                counterInner.style.transform = `translateY(${-value * 22}px)`; // 22px是每个数字的高度
+                // 监听点击事件
+                themeSwitch.addEventListener('click', () => {
+                    // 切换主题类
+                    document.body.classList.toggle('light-theme');
+                    
+                    // 切换图标
+                    if (document.body.classList.contains('light-theme')) {
+                        icon.classList.remove('fa-moon');
+                        icon.classList.add('fa-sun');
+                        localStorage.setItem('theme', 'light');
+                        
+                        // 为导航菜单项添加动画
+                        gsap.to('#nav-menu li a', {
+                            color: 'var(--light-primary)',
+                            duration: 0.5,
+                            stagger: 0.1
+                        });
+                        
+                        // 为社交媒体图标添加动画
+                        gsap.to('.social-link', {
+                            backgroundColor: 'var(--light-dark)',
+                            color: 'var(--light-primary)',
+                            duration: 0.5,
+                            stagger: 0.1
+                        });
+                        
+                        // GSAP动画切换
+                        gsap.to('.cursor-follower', {
+                            backgroundColor: 'rgba(76, 201, 240, 0.5)',
+                            duration: 0.5
+                        });
+                    } else {
+                        icon.classList.remove('fa-sun');
+                        icon.classList.add('fa-moon');
+                        localStorage.setItem('theme', 'dark');
+                        
+                        // 为导航菜单项添加动画
+                        gsap.to('#nav-menu li a', {
+                            color: 'white',
+                            duration: 0.5,
+                            stagger: 0.1
+                        });
+                        
+                        // 为社交媒体图标添加动画
+                        gsap.to('.social-link', {
+                            backgroundColor: 'var(--dark)',
+                            color: 'var(--accent)',
+                            duration: 0.5,
+                            stagger: 0.1
+                        });
+                        
+                        // GSAP动画切换
+                        gsap.to('.cursor-follower', {
+                            backgroundColor: 'rgba(0, 255, 157, 0.5)',
+                            duration: 0.5
+                        });
+                    }
+                    
+                    // 添加主题切换动画
+                    gsap.fromTo('body', 
+                        { opacity: 0.8 },
+                        { opacity: 1, duration: 0.5, ease: 'power2.out' }
+                    );
+                });
+            }
+            
+            // 初始化打字机效果
+            function initTyped() {
+                if (typeof Typed !== 'undefined') {
+                    new Typed('.typed-text', {
+                        strings: [
+                            "我喜歡寫程式",
+                            "目前正在準備APCS與CPE",
+                            "希望可以透過特殊選才進入高師軟工",
+                            "在未來成為一名出色的軟體工程師"
+                        ],
+                        typeSpeed: 80,
+                        backSpeed: 40,
+                        backDelay: 1500,
+                        startDelay: 1000,
+                        loop: true,
+                        showCursor: true,
+                        cursorChar: '|'
+                    });
+                }
+            }
+            
+            // 初始化技能进度条
+            function initSkillProgressBars() {
+                const progressBars = document.querySelectorAll('.skill-progress-bar');
+                
+                // 创建Intersection Observer监测进度条是否在视口中
+                const progressObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const progressBar = entry.target;
+                            const progress = progressBar.getAttribute('data-progress');
+                            
+                            // 使用GSAP为进度条设置动画
+                            gsap.to(progressBar, {
+                                width: progress + '%',
+                                duration: 1.5,
+                                ease: 'power2.out',
+                                onComplete: () => {
+                                    // 添加进度完成后的动画效果
+                                    gsap.to(progressBar, {
+                                        boxShadow: '0 0 10px var(--accent)',
+                                        duration: 0.5
+                                    });
+                                }
+                            });
+                            
+                            // 一旦动画开始，取消观察
+                            progressObserver.unobserve(progressBar);
+                        }
+                    });
+                }, { threshold: 0.3 });
+                
+                // 开始观察每个进度条
+                progressBars.forEach(bar => {
+                    progressObserver.observe(bar);
+                });
+            }
+            
+            // 添加3D卡片效果
+            function init3DCards() {
+                const cards = document.querySelectorAll('.card-3d-wrapper');
+                
+                cards.forEach(card => {
+                    card.addEventListener('mousemove', e => {
+                        const cardItem = card.querySelector('.card-3d');
+                        const { left, top } = card.getBoundingClientRect();
+                        
+                        // 计算鼠标在卡片上的相对位置
+                        const x = e.clientX - left;
+                        const y = e.clientY - top;
+                        
+                        // 计算旋转角度（最大±20度）
+                        const rotateY = -((x / card.clientWidth - 0.5) * 20);
+                        const rotateX = (y / card.clientHeight - 0.5) * 20;
+                        
+                        // 应用旋转效果
+                        gsap.to(cardItem, {
+                            rotateY: rotateY + 'deg',
+                            rotateX: rotateX + 'deg',
+                            duration: 0.5,
+                            ease: 'power2.out',
+                            transformPerspective: 1000,
+                            transformStyle: 'preserve-3d'
+                        });
+                    });
+                    
+                    // 鼠标离开卡片时重置
+                    card.addEventListener('mouseleave', () => {
+                        const cardItem = card.querySelector('.card-3d');
+                        gsap.to(cardItem, {
+                            rotateY: 0,
+                            rotateX: 0,
+                            duration: 0.5,
+                            ease: 'power2.out'
+                        });
+                    });
+                });
+            }
+            
+            // 添加视差滚动效果
+            function initParallaxEffect() {
+                // 为英雄区域添加视差效果
+                const heroBg = document.querySelector('.parallax-bg');
+                if (heroBg) {
+                    // 设置背景图像
+                    heroBg.style.backgroundImage = 'url("https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80")';
+                    
+                    // 滚动时更新背景位置
+                    window.addEventListener('scroll', () => {
+                        const scrollY = window.scrollY;
+                        heroBg.style.transform = `translateY(${scrollY * 0.5}px)`;
+                    });
+                }
+                
+                // 为其他部分添加视差效果
+                window.addEventListener('scroll', () => {
+                    const sections = document.querySelectorAll('section:not(.hero)');
+                    sections.forEach(section => {
+                        const scrollY = window.scrollY;
+                        const sectionTop = section.offsetTop;
+                        const distance = sectionTop - scrollY;
+                        
+                        // 基于滚动位置为元素添加移动效果
+                        if (distance < window.innerHeight && distance > -section.offsetHeight) {
+                            const titles = section.querySelectorAll('.section-title, h3');
+                            titles.forEach(title => {
+                                // 轻微的上下浮动效果
+                                title.style.transform = `translateY(${distance * 0.05}px)`;
+                            });
+                        }
+                    });
+                });
+            }
+            
+            // 添加数字滚动动画函数
+            function updateCounterWithAnimation(value) {
+                // 不再需要，改為空函數以避免錯誤
+                return;
             }
             
             // 开始更新进度
@@ -1911,18 +2794,38 @@
             const targetValues = [1, 2, 12, 4]; // 目标数值
             let animatedStats = false;
             
-            window.addEventListener('scroll', function() {
-                if (animatedStats) return; // 如果已经触发过动画，不再重复执行
-                
-                const aboutPosition = aboutSection.getBoundingClientRect();
-                // 当"关于我"区域进入视口时触发动画
-                if (aboutPosition.top < window.innerHeight * 0.75 && aboutPosition.bottom > 0) {
-                    animateStats();
-                    animatedStats = true;
-                }
+            // 创建Intersection Observer来监测元素是否在视口中
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    // 当元素进入视口时
+                    if (entry.isIntersecting) {
+                        animateStats();
+                        // 不要停止观察，这样每次重新出现都会触发动画
+                    } else {
+                        // 元素离开视口时，重置动画状态
+                        resetStats();
+                    }
+                });
+            }, {
+                threshold: 0.3 // 当30%的元素可见时触发
             });
             
+            // 开始观察统计区域
+            statsObserver.observe(aboutSection);
+            
+            // 重置统计数字为0的函数
+            function resetStats() {
+                statNumbers.forEach(stat => {
+                    stat.textContent = '0';
+                    stat.style.color = `rgb(42, 42, 114)`;
+                });
+                animatedStats = false;
+            }
+            
             function animateStats() {
+                if (animatedStats) return; // 防止动画重叠
+                animatedStats = true;
+                
                 statNumbers.forEach((stat, index) => {
                     const targetValue = targetValues[index];
                     const duration = 1500; // 动画持续时间
@@ -1966,6 +2869,128 @@
                         
                         requestAnimationFrame(updateNumber);
                     }, delay);
+                });
+            }
+            
+            // 创建雨滴粒子效果
+            function createRainEffect() {
+                const hero = document.querySelector('.hero');
+                const rain = document.createElement('div');
+                rain.className = 'rain';
+                hero.appendChild(rain);
+                
+                // 创建100个雨滴
+                for (let i = 0; i < 100; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'rain-drop';
+                    
+                    // 随机位置
+                    drop.style.left = `${Math.random() * 100}%`;
+                    
+                    // 随机动画持续时间
+                    const duration = Math.random() * 2 + 1; // 1-3秒
+                    drop.style.animationDuration = `${duration}s`;
+                    
+                    // 随机延迟
+                    drop.style.animationDelay = `${Math.random() * 5}s`;
+                    
+                    rain.appendChild(drop);
+                }
+            }
+            
+            // 初始化GSAP动画
+            function initializeGSAPAnimations() {
+                // 页面过渡动画
+                const sections = document.querySelectorAll('section');
+                sections.forEach(section => {
+                    // 设置初始状态
+                    gsap.set(section, { opacity: 0, y: 50 });
+                    
+                    // 创建滚动触发器
+                    ScrollTrigger.create({
+                        trigger: section,
+                        start: 'top 80%',
+                        onEnter: () => {
+                            gsap.to(section, {
+                                opacity: 1,
+                                y: 0,
+                                duration: 0.8,
+                                ease: 'power2.out'
+                            });
+                        },
+                        once: false
+                    });
+                });
+                
+                // HERO区域动画
+                gsap.from('.hero-content h1', {
+                    duration: 1,
+                    x: -50,
+                    opacity: 0,
+                    delay: 0.5,
+                    ease: 'power3.out'
+                });
+                
+                gsap.from('.typing-container', {
+                    duration: 1,
+                    x: -50,
+                    opacity: 0,
+                    delay: 0.7,
+                    ease: 'power3.out'
+                });
+                
+                gsap.from('.hero-content p', {
+                    duration: 1,
+                    x: -50,
+                    opacity: 0,
+                    delay: 0.9,
+                    ease: 'power3.out'
+                });
+                
+                gsap.from('.hero-buttons', {
+                    duration: 1,
+                    y: 30,
+                    opacity: 0,
+                    delay: 1.1,
+                    ease: 'back.out(1.7)'
+                });
+                
+                // 仅设置头像的初始显示动画，不影响持续的脉冲效果
+                gsap.from('.hero-avatar', {
+                    duration: 1.5,
+                    scale: 0.8,
+                    opacity: 0,
+                    delay: 0.5,
+                    ease: 'elastic.out(1, 0.3)'
+                });
+                
+                // 导航栏动画
+                gsap.from('#nav-menu li', {
+                    duration: 0.5,
+                    y: -20,
+                    opacity: 0,
+                    stagger: 0.1,
+                    delay: 0.8,
+                    ease: 'power1.out'
+                });
+                
+                // 为每个技能框创建悬停动画
+                document.querySelectorAll('.skill-box').forEach(box => {
+                    box.addEventListener('mouseenter', () => {
+                        gsap.to(box, {
+                            y: -10,
+                            boxShadow: '0 15px 30px rgba(255, 255, 255, 0.1)',
+                            duration: 0.3
+                        });
+                    });
+                    
+                    box.addEventListener('mouseleave', () => {
+                        gsap.to(box, {
+                            y: 0,
+                            boxShadow: '0 5px 15px rgba(255, 255, 255, 0.05)',
+                            duration: 0.3
+                        });
+                    });
                 });
             }
             
@@ -2067,22 +3092,73 @@
                 });
             });
             
-            // 添加滾動觸發動畫
-            window.addEventListener('scroll', function() {
-                const scrollPosition = window.scrollY;
-                const windowHeight = window.innerHeight;
+            // 初始化頭像粒子效果
+            function initAvatarParticles() {
+                const avatarContainer = document.querySelector('.hero-avatar-container');
+                if (!avatarContainer) return;
                 
-                // 為各個區塊添加滾動觸發動畫
-                document.querySelectorAll('section').forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    const sectionHeight = section.offsetHeight;
+                // 創建粒子容器
+                const particlesContainer = document.createElement('div');
+                particlesContainer.className = 'avatar-particles';
+                avatarContainer.appendChild(particlesContainer);
+                
+                // 生成粒子函數
+                function createParticle() {
+                    const particle = document.createElement('div');
+                    particle.className = 'avatar-particle';
                     
-                    if (scrollPosition > sectionTop - windowHeight * 0.7 && 
-                        scrollPosition < sectionTop + sectionHeight) {
-                        section.classList.add('active-section');
+                    // 隨機粒子位置（在頭像周圍）
+                    const angle = Math.random() * Math.PI * 2; // 隨機角度
+                    const radius = 180 + Math.random() * 20; // 粒子生成半徑
+                    const x = 200 + Math.cos(angle) * radius;
+                    const y = 200 + Math.sin(angle) * radius;
+                    
+                    // 隨機移動方向和距離
+                    const tx = (Math.random() - 0.5) * 100;
+                    const ty = (Math.random() - 0.5) * 100;
+                    particle.style.setProperty('--tx', `${tx}px`);
+                    particle.style.setProperty('--ty', `${ty}px`);
+                    
+                    // 隨機大小
+                    const size = 2 + Math.random() * 5;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // 隨機顏色
+                    const hue = Math.random() < 0.5 ? 180 : 140; // 在兩種色調之間選擇
+                    const lightness = 50 + Math.random() * 30;
+                    particle.style.background = `hsl(${hue}, 100%, ${lightness}%)`;
+                    particle.style.boxShadow = `0 0 ${size*2}px hsl(${hue}, 100%, ${lightness}%)`;
+                    
+                    // 設置位置和動畫
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    
+                    // 添加動畫
+                    const duration = 3 + Math.random() * 4;
+                    particle.style.animation = `particle-animation ${duration}s ease-out forwards`;
+                    
+                    // 添加到容器
+                    particlesContainer.appendChild(particle);
+                    
+                    // 動畫結束後移除粒子
+                    setTimeout(() => {
+                        particle.remove();
+                    }, duration * 1000);
+                }
+                
+                // 定期產生粒子
+                let particleInterval = setInterval(createParticle, 300);
+                
+                // 當頁面不可見時停止生成粒子以節省資源
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        clearInterval(particleInterval);
+                    } else {
+                        particleInterval = setInterval(createParticle, 300);
                     }
                 });
-            });
+            }
         });
     </script>
 </body>
